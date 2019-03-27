@@ -9,10 +9,22 @@ dir = os.path.dirname(dn.__file__)
 print("darknet path", dir)
 
 class QuickDarknet:
-    def __init__(self):
+    def __init__(self, tiny=False):
+        try: # keep only one instance design to avoid "out of memory"
+            self.meta = QuickDarknet.meta 
+            self.net = QuickDarknet.net
+            return
+        except: # if no instance then go ahead
+            pass
         dn.set_gpu(0)
-        self.net = dn.load_net(str.encode(os.path.join(dir, "cfg/yolov3.cfg")), str.encode(os.path.join(dir, "weights/yolov3.weights")), 0)
+        if tiny: # tiny-weights would be faster but not precise enough
+            self.net = dn.load_net(str.encode(os.path.join(dir, "cfg/yolov3-tiny.cfg")), str.encode(os.path.join(dir, "weights/yolov3-tiny.weights")), 0)
+        else:
+            self.net = dn.load_net(str.encode(os.path.join(dir, "cfg/yolov3.cfg")),
+                                   str.encode(os.path.join(dir, "weights/yolov3.weights")), 0)
         self.meta = dn.load_meta(str.encode(os.path.join(dir, "cfg/coco.data")))
+        QuickDarknet.meta = self.meta # save the instance to class static member
+        QuickDarknet.net = self.net
 
     def detect(self, image_path: str, object_name:str="", threshold=0):
         r = dn.detect(self.net, self.meta, str.encode(image_path))
