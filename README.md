@@ -9,10 +9,14 @@ for image_uri in tqdm(image_list):
 # Install 安装
 ## 1. The same as official version 与官方版本相同
 ```
-git clone https://github.com/pjreddie/darknet
+git clone https://github.com/pjreddie/darknet #please git clone from the original repo
+#git clone https://github.com/abner-gong/darknet #then copy three python files from my repo
 cd darknet
+#vim MakeFile 
+#if you want to use GPU, change the first 2 lines
+#if you want to use GPU and your own OpenCV, change the first 3 lines and install "sudo apt-get install libopencv-dev python-opencv ffmpeg"
 make
-mv libdarknet.so /lib 
+sudo mv libdarknet.so /lib 
 mkdir weights
 cd weights
 wget https://pjreddie.com/media/files/yolov3.weights
